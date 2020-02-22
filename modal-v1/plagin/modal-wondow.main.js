@@ -2,14 +2,17 @@ $ = {}
 
 function _createModal(options) {
   const modal = document.createElement('div')
+  const title = options.title || 'Тыц'
+  const closable = options.closable
+
   modal.classList.add('modal-window')
 
   modal.insertAdjacentHTML("afterbegin", `
     <div class="modal-window__overlay">
       <div class="madal-window__window">
         <div class="madal-window__header">
-          <span class="madal-window__title">Заголовок модального окна</span>
-          <span class="madal-window__close">&times;</span>
+          <span class="madal-window__title">${title}</span>
+          ${ closable ? '<span class="madal-window__close">&times;</span>' : '' }
         </div>
         <div class="madal-window__main">
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni eius nostrum nihil fugiat quis eligendi.
@@ -32,22 +35,24 @@ function _createModal(options) {
   return modal
 }
 
-$.modal = function (options) {
-  /*
-   * TODO: решить вопрос скорости анимации через настройки
-   */
+$.modal = function (options = {}) {
   const ANIMATION_SPEED = 200
   $modal = _createModal(options)
+  let closing = false
 
   return {
     open() {
-      $modal.classList.add('open')
+      if (!closing) {
+        $modal.classList.add('open')
+      }
     },
     close() {
+      closing = true
       $modal.classList.remove('open')
       $modal.classList.add('hide')
       setTimeout(() => {
-
+        $modal.classList.remove('hide')
+        closing = false
       }, ANIMATION_SPEED)
     },
     destroy() {}
